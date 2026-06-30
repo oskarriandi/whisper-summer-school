@@ -15,15 +15,14 @@ generator = pipeline(
     model=model,
     tokenizer=tokenizer,
     max_new_tokens=700,
-    temperature=0.2,
-    do_sample=False
+    do_sample=False,
 )
 
 SYSTEM_PROMPT = """You are a clinical documentation assistant.
 You are not a doctor.
 You must not invent clinical facts."""
 
-def generate_soap(transcript: str) -> str:
+def generate_soap_hf(transcript: str) -> str:
     prompt = f"""{SYSTEM_PROMPT}
 
 Convert the transcript into a SOAP note.
@@ -46,5 +45,5 @@ SOAP Note:"""
 if __name__ == "__main__":
     sample = """Doctor: Good morning. What brings you in today?
 Patient: I have had a cough and fever for about three days."""
-    print(generate_soap(sample))
+    print(generate_soap_hf(sample))
 

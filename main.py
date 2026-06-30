@@ -11,26 +11,28 @@ from transcribe import transcribe_audio
 from soap_generator import generate_soap_note, save_soap_note
 
 
-def run_pipeline(audio_path: str, whisper_model: str = "base", llm_model: str = "biomistral"):
+def run_pipeline(audio_path: str, whisper_model: str = "base", llm_model: str = "llama3.2:3b", language: str = "id"):
     """
     Pipeline lengkap: Audio → Transkrip → SOAP Note
-    
+
     Args:
         audio_path: Path ke file audio
         whisper_model: tiny | base | small | medium | large
-        llm_model: biomistral | medllama2
+        llm_model: any model available via `ollama list`
+        language: kode bahasa ("id", "en") atau "auto" untuk deteksi otomatis
     """
     print("\n" + "="*55)
     print("  🏥 WHISPER SUMMER SCHOOL - MEDICAL PIPELINE")
     print("="*55)
     print(f"  📁 Audio     : {audio_path}")
     print(f"  🎙️  Whisper   : {whisper_model}")
+    print(f"  🌐 Language  : {language}")
     print(f"  🤖 LLM Model : {llm_model}")
     print("="*55 + "\n")
 
     # ── STEP 1: Transkripsi Audio ──────────────────────────
     print("📍 STEP 1: Transkripsi Audio dengan Whisper...")
-    transcription = transcribe_audio(audio_path, model_size=whisper_model)
+    transcription = transcribe_audio(audio_path, model_size=whisper_model, language=language)
     
     transcript_text = transcription["text"]
     print(f"\n📝 Hasil Transkripsi ({len(transcript_text)} karakter):")
@@ -81,9 +83,14 @@ def main():
     )
     parser.add_argument(
         "--llm-model",
-        default="biomistral",
-        choices=["biomistral", "medllama2"],
-        help="Model LLM untuk SOAP note (default: biomistral)"
+        default="llama3.2:3b",
+        help="Model LLM untuk SOAP note (default: llama3.2:3b)"
+    )
+    parser.add_argument(
+        "--language",
+        default="id",
+        choices=["id", "en", "auto"],
+        help="Bahasa audio: id | en | auto (default: id)"
     )
 
     args = parser.parse_args()
@@ -95,7 +102,8 @@ def main():
     result = run_pipeline(
         audio_path=args.audio,
         whisper_model=args.whisper_model,
-        llm_model=args.llm_model
+        llm_model=args.llm_model,
+        language=args.language,
     )
 
 

@@ -1,11 +1,10 @@
+import os
 import ollama
 import json
 import re
 from datetime import datetime
 
-# Model terkecil yang tersedia
-MEDICAL_MODEL = "biomistral"   # ~4.5GB Q4_K_M
-# Alternatif: "medllama2"      # ~3.8GB jika biomistral terlalu besar
+MEDICAL_MODEL = "llama3.2:3b"
 
 SOAP_PROMPT_TEMPLATE = """You are a clinical documentation assistant. 
 Based on the following doctor-patient conversation transcript, generate a structured SOAP note.
@@ -101,6 +100,8 @@ def save_soap_note(soap_dict: dict, output_path: str = None) -> str:
     
     if output_path is None:
         output_path = f"outputs/soap_{timestamp}"
+
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
     # Simpan JSON
     json_path = f"{output_path}.json"

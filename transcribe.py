@@ -2,14 +2,15 @@ import whisper
 import os
 import sys
 
-def transcribe_audio(audio_path: str, model_size: str = "base") -> dict:
+def transcribe_audio(audio_path: str, model_size: str = "base", language: str = "id") -> dict:
     """
     Transkripsi file audio menggunakan OpenAI Whisper.
-    
+
     Args:
         audio_path: Path ke file audio
         model_size: tiny | base | small | medium | large-v3-turbo
-    
+        language: kode bahasa ISO 639-1 ("id", "en", dll) atau None untuk auto-detect
+
     Returns:
         dict dengan 'text' dan 'segments'
     """
@@ -19,10 +20,11 @@ def transcribe_audio(audio_path: str, model_size: str = "base") -> dict:
     print(f"🎙️  Loading Whisper model '{model_size}'...")
     model = whisper.load_model(model_size)
 
+    lang_arg = None if language == "auto" else language
     print(f"🔊 Transkripsi: {audio_path}")
     result = model.transcribe(
         audio_path,
-        language="id",        # Ganti "en" untuk English
+        language=lang_arg,
         verbose=False
     )
 
